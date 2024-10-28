@@ -18,13 +18,6 @@ def before_submit(self,method):
                         aqty=(qty/(k.crate_quantity*(1+item.crate_overage/100)))
                         crate.db_set("outgoing_count",aqty)
                         crate.db_set("qty",qty)
-    for k in self.items:
-        price_list=frappe.db.get_value("Item Price",{"item_code":k.item_code,"price_list":self.selling_price_list},["price_list_rate"])
-        if price_list:
-            itemd=frappe.get_doc("Item",k.item_code)
-            if itemd.custom_disable_validation_for_price==0:
-                if price_list*(k.stock_qty/k.qty) !=k.rate:
-                    frappe.throw("You can't save Invoice because Orf Rate Not Match In Row '{0}'".format(k.idx))
     if frappe.db.get_single_value("Dairy Settings", "crate_reconciliation_based_on") == "Sales Invoice":
         dist_cratetype = frappe.db.sql(""" select distinct(crate_type) 
                                            from `tabCrate Count Child` 
